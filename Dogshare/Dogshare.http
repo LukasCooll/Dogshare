@@ -1,0 +1,6 @@
+@Dogshare_HostAddress = http://localhost:5139
+
+GET {{Dogshare_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
