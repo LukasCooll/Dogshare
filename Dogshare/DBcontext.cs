@@ -20,27 +20,28 @@ namespace Dogshare
             builder.Entity<PostLike>()
                 .HasKey(pl => new { pl.UserId, pl.PostId });
 
-            // 2. Clear out both cascades on the join table to fully break the cycle
+
             builder.Entity<PostLike>()
                 .HasOne(pl => pl.User)
                 .WithMany()
                 .HasForeignKey(pl => pl.UserId)
-                .OnDelete(DeleteBehavior.NoAction); // <-- Change to NoAction
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<PostLike>()
                 .HasOne(pl => pl.Post)
                 .WithMany()
                 .HasForeignKey(pl => pl.PostId)
-                .OnDelete(DeleteBehavior.NoAction); // <-- Change to NoAction
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // 3. Post Configuration
+
             builder.Entity<Post>()
                 .HasOne(p => p.Author)
                 .WithMany()
                 .HasForeignKey(p => p.AuthorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 4. Comment Configuration
+
+
             builder.Entity<Comment>()
                 .HasOne(c => c.Post)
                 .WithMany(p => p.Comments)

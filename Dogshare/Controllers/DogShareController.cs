@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Dogshare.Thing;
 using System.Threading.Tasks;
+using Microsoft.Identity.Client;
 
 
 namespace Dogshare.Controllers
@@ -165,7 +166,9 @@ namespace Dogshare.Controllers
                 AuthorId = userId,
                 PostId = postId
             };
-            _context.Comments.Add(comment);
+
+
+            _context.Comments.AddAsync(comment);
             await _context.SaveChangesAsync();
             return Ok(new
             {
@@ -176,7 +179,37 @@ namespace Dogshare.Controllers
                 comment.PostId
             });
 
+
+
             //TODO: fix Comments, configure everything and do frontend
+        }
+
+
+        [HttpGet("AllPosts")]
+        public async Task<ActionResult<Post>> GetAllPosts()
+        {
+            var posts = await _context.Posts
+        .Select(p => new
+        {
+            p.id, 
+            p.Title,
+            p.Description,
+            p.Image,
+            p.Likes,
+            p.DatePosted,
+            p.AuthorId,
+            Comments = p.Comments.Select(c => new
+            {
+                c.id, 
+                c.CommentText,
+                c.DateCommented,
+                c.AuthorId,
+                c.PostId
+            }).ToList()
+        })
+        .ToListAsync();
+
+            return Ok(posts);
         }
     }
 }
