@@ -33,7 +33,7 @@ namespace Dogshare
                 .HasForeignKey(pl => pl.PostId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-
+            // 3. Post Configuration
             builder.Entity<Post>()
                 .HasOne(p => p.Author)
                 .WithMany()
