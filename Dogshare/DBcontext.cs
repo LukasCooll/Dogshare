@@ -16,7 +16,7 @@ namespace Dogshare
         {
             base.OnModelCreating(builder);
 
-            // 1. Composite Key for PostLike
+
             builder.Entity<PostLike>()
                 .HasKey(pl => new { pl.UserId, pl.PostId });
 
@@ -39,7 +39,6 @@ namespace Dogshare
                 .WithMany()
                 .HasForeignKey(p => p.AuthorId)
                 .OnDelete(DeleteBehavior.Cascade);
-
 
 
             builder.Entity<Comment>()
