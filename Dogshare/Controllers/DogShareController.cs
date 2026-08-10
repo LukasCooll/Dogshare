@@ -181,7 +181,7 @@ namespace Dogshare.Controllers
 
 
 
-            //TODO: fix Comments, configure everything and do frontend
+            
         }
 
 
