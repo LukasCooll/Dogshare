@@ -211,5 +211,49 @@ namespace Dogshare.Controllers
 
             return Ok(posts);
         }
+
+        [Authorize]
+        [HttpGet("UserInfo")]
+        public async Task<ActionResult<User>> GetUserInfo()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("You must be logged in to view user information.");
+            }
+            var user = await _context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.UserName,
+                    u.Email
+                })
+                .FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            return Ok(user);
+        }
+
+        [HttpGet("author/{authorId}")]
+        public async Task<ActionResult<User>> GetAuthorById(string authorId)
+        {
+            var user = await _context.Users
+                .Where(u => u.Id == authorId)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.UserName,
+                    u.Email
+                })
+                .FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            return Ok(user);
+        }
     }
 }
