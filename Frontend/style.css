@@ -1,0 +1,253 @@
+     :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --primary: #ff6b6b;
+            --primary-hover: #ff5252;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --comment-bg: #f8fafc;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .posts {
+            max-width: 640px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .post {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .username {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+        }
+
+        .dateposted {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .description {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            word-wrap: break-word;
+        }
+
+        .likes {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--primary);
+            background-color: #fff5f5;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 1.25rem;
+        }
+
+        .comments {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .comments h4 {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .comment {
+            background-color: var(--comment-bg);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.6rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .comment-author {
+            color: var(--text-main);
+        }
+
+        .comment-text {
+            color: #4a5568;
+        }
+
+        .comment-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        
+        .post p.username {
+            margin-bottom: 0.5rem;
+        }
+
+        .post p.username .User {
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        
+body > div:has(.regform, .loginform) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    z-index: 1050;
+}
+
+
+body > div.show-modal {
+    display: flex;
+}
+
+.regform,
+.loginform {
+    background: #ffffff;
+    padding: 2.5rem 2rem 2rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+    display: none;
+    flex-direction: column;
+}
+
+
+.regform.active,
+.loginform.active {
+    display: flex;
+}
+
+
+.regform h1,
+.loginform h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: #212529;
+    text-transform: capitalize;
+}
+
+
+.regform label,
+.loginform label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.25rem;
+    margin-top: 0.75rem;
+}
+
+.regform input[type="email"],
+.regform input[type="password"],
+.loginform input[type="email"],
+.loginform input[type="password"] {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.regform input[type="email"]:focus,
+.regform input[type="password"]:focus,
+.loginform input[type="email"]:focus,
+.loginform input[type="password"]:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+
+.regform input[type="submit"],
+.loginform input[type="submit"] {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.65rem;
+    background-color: #0d6efd;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.regform input[type="submit"]:hover,
+.loginform input[type="submit"]:hover {
+    background-color: #0b5ed7;
+}
+
+
+.modal-close-x {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6c757d;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-close-x:hover {
+    color: #000;
+}
+
+
+.responcetxt,
+.responcetxtlog {
+    margin-top: 1rem;
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    text-align: center;
+}

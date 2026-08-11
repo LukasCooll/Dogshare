@@ -181,7 +181,7 @@ namespace Dogshare.Controllers
 
 
 
-            
+            //TODO: fix Comments, configure everything and do frontend
         }
 
 
@@ -254,6 +254,33 @@ namespace Dogshare.Controllers
                 return NotFound("User not found.");
             }
             return Ok(user);
+        }
+
+        [HttpDelete("deletePostall")]
+        public async Task<IActionResult> DeletePost()
+        {
+            _context.Posts.RemoveRange(_context.Posts);
+            _context.PostLikes.RemoveRange(_context.PostLikes);
+            _context.Comments.RemoveRange(_context.Comments);
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete("deletePost/{postId}")]
+        public async Task<IActionResult> DeletePost(int postId)
+        {
+            var post = await _context.Posts.FindAsync(postId);
+            if (post == null)
+            {
+                return NotFound("Post not found.");
+            }
+            var likes = _context.PostLikes.Where(pl => pl.PostId == postId);
+            _context.PostLikes.RemoveRange(likes);
+            var comments = _context.Comments.Where(c => c.PostId == postId);
+            _context.Comments.RemoveRange(comments);
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
     }
 }

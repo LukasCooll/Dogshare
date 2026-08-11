@@ -1,3 +1,256 @@
-var addDigits = function(num) {
-    num.Tos
-};
+    let password;
+    let username;
+    let passwordlog;
+    let usernamelog;
+    const userpage = document.querySelector(".usernameuser")
+    let responcetxt = document.querySelector(".responcetxt")
+    let navreg = document.querySelector("#navreg")
+    let navlogin = document.querySelector("#navlogin")
+        
+        async function GetUserByID(id) {
+            let response = await fetch(`https://localhost:7085/api/DogShare/author/${id}`);
+            let user = await response.json();
+            return user;
+        }
+
+        async function GetPosts() {
+            let HTML = ``;
+            let response = await fetch("https://localhost:7085/api/DogShare/AllPosts");
+            let posts = await response.json();
+
+            
+
+            for (const element of posts) {
+                let commentsHTMLArray = await Promise.all(
+                    element.comments.map(async (c) => {
+                        let user = await GetUserByID(c.authorId);
+                        return `
+                            <div class="comment">
+                                <span class="comment-author"><strong>${user.userName || user.username || 'User'}</strong>: </span>
+                                <span class="comment-text">${c.commentText}</span>
+                                <div><small class="comment-date">${new Date(c.dateCommented).toLocaleString()}</small></div>
+                            </div>
+                        `;
+                    })
+                );
+
+
+                let usersHTML = await Promise.all(
+                    element.comments.map(async (c) => {
+                        let user = await GetUserByID(c.authorId);
+                        return `
+                            <div class="User">
+                                 <span class="username">${user.userName}</span>
+                            </div>
+                        `;
+                    })
+                );
+
+
+                HTML += `
+                    <div class="post">
+                        <p class="username">${usersHTML}</p>
+                        <p class="description">${element.description}</p>
+                        <p class="dateposted">${new Date(element.datePosted).toLocaleString()}</p>
+                        <p class="likes">Likes: ${element.likes}</p>
+                        <div class="comments">
+                            <input placeholder="Write comment here" type="text">
+                            <input type="submit" value="submit">
+                            <h4>Comments:</h4>
+                            ${commentsHTMLArray}
+                        </div>
+                    </div>
+                    <hr>`;
+                
+                console.log(element);
+            }
+
+            document.querySelector(".posts").innerHTML = HTML;
+        }
+
+        GetPosts();
+
+
+        
+const BASE_URL = 'https://localhost:7085'; 
+
+fetchProtectedData()
+
+async function registerUser(email, password) {
+    try {
+        const response = await fetch(`${BASE_URL}/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+            responcetxt.innerHTML = 'Registration successful!'
+            console.log('Registration successful!');
+            return true;
+        } else {
+            
+            const errorData = await response.json();
+            const errorMessageString = Object.values(errorData.errors)
+            .flat()
+            .join('\n');
+
+            responcetxt.innerHTML = 'Registration failed: ' + errorMessageString
+            console.error('Registration failed:', errorData);
+            return false;
+        }
+    } catch (err) {
+        console.error('Network error during registration:', err);
+    }
+}
+
+
+async function loginUser(email, password) {
+    try {
+        const response = await fetch(`${BASE_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+            console.error('Login failed');
+            return null;
+        }
+
+        
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            
+
+            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('refreshToken', data.refreshToken);
+            console.log('Login successful via Bearer token.');
+            return data;
+        }
+
+        console.log('Login successful via Cookie.');
+        return true;
+    } catch (err) {
+        console.error('Network error during login:', err);
+    }
+}
+
+async function fetchProtectedData() {
+    const token = localStorage.getItem('accessToken');
+
+    if (!token) {
+        console.error('No access token found. Please log in.');
+        return null;
+    }
+
+    try {
+        const response = await fetch(`${BASE_URL}/api/DogShare/UserInfo`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch user info: ${response.status}`);
+        }
+
+        const user = await response.json();
+        navreg.hidden = true;
+        navlogin.hidden = true;
+        userpage.innerHTML = 'welcome: ' + user.email;
+        console.log('User Info:', user);
+        return user;
+    } catch (err) {
+        console.error('Error fetching protected data:', err);
+    }
+}
+
+
+const Form = document.querySelector(".regform")
+const logform = document.querySelector(".loginform")
+
+
+Form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    password = document.querySelector(".password").value
+    username = document.querySelector(".email").value
+    console.log(password, username)
+    registerUser(username,password)
+});
+
+logform.addEventListener("submit", function(event) {
+    event.preventDefault();
+    passwordlog = document.querySelector(".passwordlog").value
+    usernamelog = document.querySelector(".emaillog").value
+    console.log(passwordlog, usernamelog)
+    loginUser(usernamelog,passwordlog)
+    fetchProtectedData()
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const regForm = document.querySelector('.regform');
+    const loginForm = document.querySelector('.loginform');
+    const modalWrapper = regForm.parentElement;
+
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    let regNavBtn, loginNavBtn;
+
+    navLinks.forEach(link => {
+        const text = link.textContent.trim().toLowerCase();
+        if (text === 'register') regNavBtn = link;
+        if (text === 'login') loginNavBtn = link;
+    });
+
+
+    [regForm, loginForm].forEach(form => {
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.type = 'button';
+        closeBtn.className = 'modal-close-x';
+        closeBtn.addEventListener('click', closeModal);
+        form.appendChild(closeBtn);
+    });
+
+
+    function openModal(formToShow) {
+        modalWrapper.classList.add('show-modal');
+        regForm.classList.remove('active');
+        loginForm.classList.remove('active');
+        formToShow.classList.add('active');
+    }
+
+  
+    function closeModal() {
+        modalWrapper.classList.remove('show-modal');
+        regForm.classList.remove('active');
+        loginForm.classList.remove('active');
+    }
+
+
+    if (regNavBtn) {
+        regNavBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(regForm);
+        });
+    }
+
+    if (loginNavBtn) {
+        loginNavBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(loginForm);
+        });
+    }
+
+
+    modalWrapper.addEventListener('click', (e) => {
+        if (e.target === modalWrapper) {
+            closeModal();
+        }
+    });
+});
+

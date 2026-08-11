@@ -3,201 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <title>DogShare Posts</title>
 </head>
-<style>
-            :root {
-            --bg-color: #f4f6f8;
-            --card-bg: #ffffff;
-            --primary: #ff6b6b;
-            --primary-hover: #ff5252;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --border-color: #e2e8f0;
-            --comment-bg: #f8fafc;
-            --radius: 12px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.5;
-            padding: 2rem 1rem;
-        }
-
-        .posts {
-            max-width: 640px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .post {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .username {
-            font-weight: 700;
-            font-size: 1.05rem;
-            color: var(--text-main);
-        }
-
-        .dateposted {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .description {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            word-wrap: break-word;
-        }
-
-        .likes {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--primary);
-            background-color: #fff5f5;
-            padding: 0.3rem 0.75rem;
-            border-radius: 20px;
-            margin-bottom: 1.25rem;
-        }
-
-        .comments {
-            border-top: 1px solid var(--border-color);
-            padding-top: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .comments h4 {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .comment {
-            background-color: var(--comment-bg);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.6rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .comment-author {
-            color: var(--text-main);
-        }
-
-        .comment-text {
-            color: #4a5568;
-        }
-
-        .comment-date {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-            display: block;
-        }
-
-        /* Cleaned JS artifact rendering */
-        .post p.username {
-            margin-bottom: 0.5rem;
-        }
-
-        .post p.username .User {
-            display: inline-block;
-            margin-right: 0.5rem;
-        }
-</style>
 <body>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">DogShare</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                <a class="nav-link" href="#">Feed</a>
+                </li>
+                <li class="nav-item">
+                <a id="navreg" class="nav-link" href="#">Register</a>
+                </li>
+                <li>
+                <a id="navlogin" class="nav-link" href="#">Login</a>
+                </li>
+                <li><a class="nav-link" href=""><p class="usernameuser"></p></a></li>
+            </ul>
+            </div>
+        </div>
+        </nav>
+
+
+    <div>
+    <form class="regform" action="">
+        <h1>register</h1>
+        <label for="">Email</label>
+        <input required placeholder="Email" class="email" type="email" name="" id="">
+        <label for="">Password</label>
+        <input required placeholder="Password" class="password" type="password" name="" id="">
+        <input type="submit" value="Submit">
+        <p class="responcetxt"></p>
+    </form>
+
+    <form class="loginform" action="">
+        <h1>log in</h1>
+        <label for="">Email</label>
+        <input required placeholder="Email" class="emaillog" type="email" name="" id="">
+        <label for="">Password</label>
+        <input required placeholder="Password" class="passwordlog" type="password" name="" id="">
+        <input type="submit" value="Submit">
+        <p class="responcetxtlog"></p>
+    </form>
+    </div>
+
+    <h1>feed</h1>
     <div class="posts"></div>
+    
 
-    <script>
-        async function GetUserByID(id) {
-            let response = await fetch(`https://localhost:7085/api/DogShare/author/${id}`);
-            let user = await response.json();
-            return user;
-        }
-
-        async function GetPosts() {
-            let HTML = ``;
-            let response = await fetch("https://localhost:7085/api/DogShare/AllPosts");
-            let posts = await response.json();
-
-
-            for (const element of posts) {
-
-
-                let commentsHTMLArray = await Promise.all(
-                    element.comments.map(async (c) => {
-                        let user = await GetUserByID(c.authorId);
-                        return `
-                            <div class="comment">
-                                <span class="comment-author"><strong>${user.userName || user.username || 'User'}</strong>: </span>
-                                <span class="comment-text">${c.commentText}</span>
-                                <div><small class="comment-date">${new Date(c.dateCommented).toLocaleString()}</small></div>
-                            </div>
-                        `;
-                    })
-                );
-
-
-                let usersHTML = await Promise.all(
-                    element.comments.map(async (c) => {
-                        let user = await GetUserByID(c.authorId);
-                        return `
-                            <div class="User">
-                                 <span class="username">${user.userName}</span>
-                            </div>
-                        `;
-                    })
-                );
-
-
-                HTML += `
-                    <div class="post">
-                        <p class="username">${usersHTML}</p>
-                        <p class="description">${element.description}</p>
-                        <p class="dateposted">${new Date(element.datePosted).toLocaleString()}</p>
-                        <p class="likes">Likes: ${element.likes}</p>
-                        <div class="comments">
-                            <h4>Comments:</h4>
-                            ${commentsHTMLArray}
-                        </div>
-                    </div>
-                    <hr>`;
-                
-                console.log(element);
-            }
-
-            document.querySelector(".posts").innerHTML = HTML;
-        }
-
-        GetPosts();
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>
