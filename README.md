@@ -1,4 +1,39 @@
-<h1>Dog share</h1>
+# DogShare 🐕
 
-Dogshare is a social network for dog owners, you can add your dogs, make posts and communicate with other dog owners.
-currently im working on backend, like 90% of it is complete, im starting to work on frontend so is would be a clean polished project
+DogShare is a social network designed for dog owners to showcase their pets, share posts, and connect with other dog lovers.
+
+> **Project Status:** Backend architecture is ~90% complete. Frontend development is currently in progress to deliver a clean, polished UI.
+
+---
+
+## 🛠️ Tech Stack
+
+* **Backend:** C# / .NET
+* **Database:** Entity Framework Core & SQL Server
+* **Frontend:** HTML5, CSS3, JavaScript
+
+---
+
+## 🚀 Setup & Getting Started
+
+### 1. Database Configuration
+1. Open the solution in Visual Studio or your preferred IDE.
+2. Create a local SQL Server database.
+3. Open appsettings.json and update the connection string to match your local SQL Server instance:
+
+    {
+      "ConnectionStrings": {
+        "DefaultConnection": "Server=YOUR_SERVER_NAME;Database=DogShareDB;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true"
+      }
+    }
+
+### 2. Run Database Migrations
+Open the Package Manager Console in Visual Studio (or use the .NET CLI) and run:
+
+    Add-Migration InitialCreate
+    Update-Database
+
+### 3. Run the Application
+1. Start the backend server so the API endpoints are active.
+2. Navigate to the frontend/ directory.
+3. Open index.html in your browser to start browsing the feed!
