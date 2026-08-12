@@ -26,6 +26,12 @@
                 <a id="navlogin" class="nav-link" href="#">Login</a>
                 </li>
                 <li><a class="nav-link" href=""><p class="usernameuser"></p></a></li>
+                <li>
+                <a class="nav-link" href="">Post</a>
+                </li>
+                <li>
+                <a class="nav-link" href=""></a>
+                </li>
             </ul>
             </div>
         </div>
@@ -35,10 +41,10 @@
     <div>
     <form class="regform" action="">
         <h1>register</h1>
-        <label for="">Email</label>
+        <label autocomplete="email" for="">Email</label>
         <input required placeholder="Email" class="email" type="email" name="" id="">
         <label for="">Password</label>
-        <input required placeholder="Password" class="password" type="password" name="" id="">
+        <input autocomplete="new-password" required placeholder="Password" class="password" type="password" name="" id="">
         <input type="submit" value="Submit">
         <p class="responcetxt"></p>
     </form>
@@ -46,9 +52,9 @@
     <form class="loginform" action="">
         <h1>log in</h1>
         <label for="">Email</label>
-        <input required placeholder="Email" class="emaillog" type="email" name="" id="">
+        <input autocomplete="email"  required placeholder="Email" class="emaillog" type="email" name="" id="">
         <label for="">Password</label>
-        <input required placeholder="Password" class="passwordlog" type="password" name="" id="">
+        <input autocomplete="current-password" required placeholder="Password" class="passwordlog" type="password" name="" id="">
         <input type="submit" value="Submit">
         <p class="responcetxtlog"></p>
     </form>

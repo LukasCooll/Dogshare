@@ -75,7 +75,6 @@ namespace Dogshare.Controllers
             _context.SaveChanges();
             return Ok(post);
         }
-
         [Authorize]
         [HttpPost("like/{postId}")]
         public async Task<ActionResult<Post>> LikePost(int postId)
@@ -95,7 +94,7 @@ namespace Dogshare.Controllers
             }
 
             bool hasLiked = await _context.PostLikes
-                .AnyAsync(pl => pl.UserId == userId && pl.PostId == postId);
+              .AnyAsync(pl => pl.UserId == userId && pl.PostId == postId);
 
             if (hasLiked)
             {

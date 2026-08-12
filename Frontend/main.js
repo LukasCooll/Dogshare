@@ -6,6 +6,11 @@
     let responcetxt = document.querySelector(".responcetxt")
     let navreg = document.querySelector("#navreg")
     let navlogin = document.querySelector("#navlogin")
+    let likebtn = document.querySelector(".likebtn")
+    let IsLoggedin = false
+    let usersHTML;
+    
+    let postid;
         
         async function GetUserByID(id) {
             let response = await fetch(`https://localhost:7085/api/DogShare/author/${id}`);
@@ -35,7 +40,7 @@
                 );
 
 
-                let usersHTML = await Promise.all(
+                usersHTML = await Promise.all(
                     element.comments.map(async (c) => {
                         let user = await GetUserByID(c.authorId);
                         return `
@@ -46,13 +51,16 @@
                     })
                 );
 
+                postid = element.id;
 
                 HTML += `
                     <div class="post">
                         <p class="username">${usersHTML}</p>
                         <p class="description">${element.description}</p>
                         <p class="dateposted">${new Date(element.datePosted).toLocaleString()}</p>
-                        <p class="likes">Likes: ${element.likes}</p>
+                        <p class="likes">Likes: <span class="like-count-num">${element.likes}</span></p>
+                        <button class="likebtn" data-post-id="${element.id}">like</button>
+                        <button class="dislikebtn" data-post-id="${element.id}">dislike</button>
                         <div class="comments">
                             <input placeholder="Write comment here" type="text">
                             <input type="submit" value="submit">
@@ -142,6 +150,7 @@ async function fetchProtectedData() {
 
     if (!token) {
         console.error('No access token found. Please log in.');
+
         return null;
     }
 
@@ -159,6 +168,7 @@ async function fetchProtectedData() {
         }
 
         const user = await response.json();
+        IsLoggedin = true;
         navreg.hidden = true;
         navlogin.hidden = true;
         userpage.innerHTML = 'welcome: ' + user.email;
@@ -190,6 +200,13 @@ logform.addEventListener("submit", function(event) {
     loginUser(usernamelog,passwordlog)
     fetchProtectedData()
 });
+
+
+
+
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const regForm = document.querySelector('.regform');
@@ -254,3 +271,68 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+
+document.body.addEventListener("click", async function(event) {
+    if (event.target.classList.contains("likebtn")) {
+        const postId = event.target.dataset.postId;
+
+        console.log("Liking post:", postId);
+
+        await Likefun(postId);
+        GetPosts();
+    }
+
+    if (event.target.classList.contains("dislikebtn")) {
+        const postId = event.target.dataset.postId;
+
+        console.log("disliking post:", postId);
+
+        await dislikefun(postId);
+        GetPosts();
+    }
+});
+
+async function Likefun(id) {
+    const token = localStorage.getItem('accessToken');
+    try {
+        const response = await fetch(`${BASE_URL}/api/DogShare/like/${id}`, {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ id })
+        });
+        if (!response.ok) {
+            alert("you already liked this post!")
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+async function dislikefun(id) {
+    const token = localStorage.getItem('accessToken');
+    try {
+        const response = await fetch(`${BASE_URL}/api/DogShare/unlike/${id}`, {
+        method: 'DELETE',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ id })
+        });
+        if (!response.ok) {
+            alert("you already disliked this post!")
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error)
+    }
+}
