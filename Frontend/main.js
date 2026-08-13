@@ -7,6 +7,7 @@
     let navreg = document.querySelector("#navreg")
     let navlogin = document.querySelector("#navlogin")
     let likebtn = document.querySelector(".likebtn")
+    let dislikebtn = document.querySelector(".dislikebtn")
     let IsLoggedin = false
     let usersHTML;
     
@@ -180,6 +181,8 @@ async function fetchProtectedData() {
 }
 
 
+
+
 const Form = document.querySelector(".regform")
 const logform = document.querySelector(".loginform")
 
@@ -304,8 +307,11 @@ async function Likefun(id) {
         },
         body: JSON.stringify({ id })
         });
-        if (!response.ok) {
+        if (response.status == 400) {
             alert("you already liked this post!")
+        }
+        if (response.status == 401) {
+            alert("Bark! (log in or register to like!)")
         }
 
         const data = await response.json();
@@ -326,8 +332,11 @@ async function dislikefun(id) {
         },
         body: JSON.stringify({ id })
         });
-        if (!response.ok) {
+        if (response.status == 400) {
             alert("you already disliked this post!")
+        }
+        if (response.status == 401) {
+            alert("Bark! (log in or register to dislike!)")
         }
 
         const data = await response.json();
