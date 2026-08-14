@@ -4,6 +4,7 @@
     let usernamelog;
     const userpage = document.querySelector(".usernameuser")
     let responcetxt = document.querySelector(".responcetxt")
+    let responcetxtlog = document.querySelector(".responcetxtlog")
     let navreg = document.querySelector("#navreg")
     let navlogin = document.querySelector("#navlogin")
     let likebtn = document.querySelector(".likebtn")
@@ -14,10 +15,6 @@
     navlogout.hidden = true;
     let postid;
         
-        window.addEventListener('beforeunload', () => {
-            sessionStorage.setItem('scrollPosition', window.scrollY);
-        });
-
 
 
 
@@ -104,6 +101,9 @@ async function registerUser(email, password) {
         if (response.ok) {
             responcetxt.innerHTML = 'Registration successful!'
             console.log('Registration successful!');
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
             return true;
         } else {
             
@@ -144,6 +144,10 @@ async function loginUser(email, password) {
             localStorage.setItem('accessToken', data.accessToken);
             localStorage.setItem('refreshToken', data.refreshToken);
             console.log('Login successful via Bearer token.');
+            responcetxtlog.innerHTML = 'Login successful!'
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
             return data;
         }
 
