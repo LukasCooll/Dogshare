@@ -10,9 +10,17 @@
     let dislikebtn = document.querySelector(".dislikebtn")
     let IsLoggedin = false
     let usersHTML;
-    
+    navlogout = document.querySelector("#navlogout")
+    navlogout.hidden = true;
     let postid;
         
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('scrollPosition', window.scrollY);
+        });
+
+
+
+
         async function GetUserByID(id) {
             let response = await fetch(`https://localhost:7085/api/DogShare/author/${id}`);
             let user = await response.json();
@@ -63,8 +71,8 @@
                         <button class="likebtn" data-post-id="${element.id}">like</button>
                         <button class="dislikebtn" data-post-id="${element.id}">dislike</button>
                         <div class="comments">
-                            <input placeholder="Write comment here" type="text">
-                            <input type="submit" value="submit">
+                            <input class="commentinput" placeholder="Write comment here" type="text">
+                            <button class="submitcomt" data-post-id="${element.id}">submit</button>
                             <h4>Comments:</h4>
                             ${commentsHTMLArray}
                         </div>
@@ -172,6 +180,7 @@ async function fetchProtectedData() {
         IsLoggedin = true;
         navreg.hidden = true;
         navlogin.hidden = true;
+        navlogout.hidden = false;
         userpage.innerHTML = 'welcome: ' + user.email;
         console.log('User Info:', user);
         return user;
@@ -343,5 +352,73 @@ async function dislikefun(id) {
         return data;
     } catch (error) {
         console.error(error)
+    }
+}
+
+document.body.addEventListener("click", async function(event) {
+    const submitButton = event.target.closest(".submitcomt");
+    if (!submitButton) return;
+
+    const postId = submitButton.dataset.postId;
+    if (!postId) {
+        console.warn("Submit button is missing a post ID.");
+        return;
+    }
+
+    const post = submitButton.closest(".post");
+    const commentInput = post ? post.querySelector(".commentinput") : null;
+    const commentvalue = commentInput ? commentInput.value.trim() : "";
+
+    if (!commentvalue) {
+        alert("Please enter a comment before submitting.");
+        return;
+    }
+
+    console.log("Commenting:", postId, commentvalue);
+    await Comment(postId, commentvalue);
+    GetPosts()
+});
+
+async function Comment(id, comment) {
+    const token = localStorage.getItem('accessToken');
+    try {
+        const response = await fetch(`${BASE_URL}/api/DogShare/comment/${id}`, {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({Content: comment, datePosted: new Date().toISOString() })
+        });
+        
+        if(response.status == 401) {
+            alert("Bark! (log in or register to comment!)")
+        }
+
+        const data = await response.json();
+        console.log(new Date().toISOString())
+        return data;
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+navlogout.addEventListener("click", function(event) {
+    event.preventDefault();
+    LogOut();
+});
+
+function LogOut(){
+    let logoutoption = confirm("Are you sure you want to log out?")
+
+    if(logoutoption){
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        IsLoggedin = false;
+        navreg.hidden = false;
+        navlogin.hidden = false;
+        navlogout.hidden = true;
+        userpage.innerHTML = '';
+        alert("You have been logged out.")
     }
 }
