@@ -15,7 +15,8 @@
     navlogout.hidden = true;
     let alluserposts;
     let postid;
-        
+    let userid;
+    let commentsHTMLArray;
 
 
 
@@ -33,7 +34,7 @@
             
 
             for (const element of posts) {
-                let commentsHTMLArray = await Promise.all(
+                commentsHTMLArray = await Promise.all(
                     element.comments.map(async (c) => {
                         let user = await GetUserByID(c.authorId);
                         return `
@@ -78,7 +79,7 @@
                     </div>
                     <hr>`;
                 
-                console.log(element);
+                // console.log(element);
             }
 
             document.querySelector(".posts").innerHTML = HTML;
@@ -187,7 +188,9 @@ async function fetchProtectedData() {
         navreg.hidden = true;
         navlogin.hidden = true;
         navlogout.hidden = false;
+        userid = user.id;
         userpage.innerHTML = 'welcome: ' + user.email;
+        document.querySelector(".emailview").innerHTML = user.email;
         console.log('User Info:', user);
         return user;
     } catch (err) {
@@ -428,3 +431,38 @@ function LogOut(){
         alert("You have been logged out.")
     }
 }
+
+
+async function UserPosts(){
+    let userpostsHTML = ``;
+    let response = await fetch(`${BASE_URL}/api/DogShare/GetPostsOfUser`, {
+        Method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'application/json'
+        }
+    });
+    let posts = await response.json();
+    posts.forEach(post => {
+        userpostsHTML += `
+            <div class="userpost">
+                <p class="title">${post.title}</p>
+                <p class="description">${post.description}</p>
+                <p class="dateposted">${new Date(post.datePosted).toLocaleString()}</p>
+                <p class="likes">Likes: ${post.likes}</p>
+                <button class="likebtn" data-post-id="${post.id}">like</button>
+                <button class="dislikebtn" data-post-id="${post.id}">dislike</button>
+                <div class="comments">
+                    <input class="commentinput" placeholder="Write comment here" type="text">
+                    <button class="submitcomt" data-post-id="${post.id}">submit</button>
+                    <h4>Comments:</h4>
+                    ${commentsHTMLArray}
+                </div>
+            </div>
+            <hr>`;
+    })
+
+    document.querySelector('.userposts').innerHTML = userpostsHTML;
+}
+
+UserPosts()
