@@ -4,20 +4,18 @@
     let usernamelog;
     const userpage = document.querySelector(".usernameuser")
     let responcetxt = document.querySelector(".responcetxt")
+    let responcetxtlog = document.querySelector(".responcetxtlog")
     let navreg = document.querySelector("#navreg")
     let navlogin = document.querySelector("#navlogin")
     let likebtn = document.querySelector(".likebtn")
     let dislikebtn = document.querySelector(".dislikebtn")
     let IsLoggedin = false
-    let usersHTML;
+    let userpageHTML = document.querySelector(".userpage")
     navlogout = document.querySelector("#navlogout")
     navlogout.hidden = true;
+    let alluserposts;
     let postid;
         
-        window.addEventListener('beforeunload', () => {
-            sessionStorage.setItem('scrollPosition', window.scrollY);
-        });
-
 
 
 
@@ -48,23 +46,24 @@
                     })
                 );
 
+                
 
-                usersHTML = await Promise.all(
-                    element.comments.map(async (c) => {
-                        let user = await GetUserByID(c.authorId);
-                        return `
-                            <div class="User">
-                                 <span class="username">${user.userName}</span>
-                            </div>
-                        `;
-                    })
-                );
+                let userHTML = '';
+                if (element.authorId) {
+                    let user = await GetUserByID(element.authorId);
+                    userHTML = `
+                        <div class="User">
+                             <span class="username">${user.userName}</span>
+                        </div>
+                    `;
+                }
 
                 postid = element.id;
 
                 HTML += `
                     <div class="post">
-                        <p class="username">${usersHTML}</p>
+                        <p class="username">${userHTML}</p>
+                        <p style="font-weight: bold;" class="title">${element.title}</p>
                         <p class="description">${element.description}</p>
                         <p class="dateposted">${new Date(element.datePosted).toLocaleString()}</p>
                         <p class="likes">Likes: <span class="like-count-num">${element.likes}</span></p>
@@ -104,6 +103,9 @@ async function registerUser(email, password) {
         if (response.ok) {
             responcetxt.innerHTML = 'Registration successful!'
             console.log('Registration successful!');
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
             return true;
         } else {
             
@@ -144,6 +146,10 @@ async function loginUser(email, password) {
             localStorage.setItem('accessToken', data.accessToken);
             localStorage.setItem('refreshToken', data.refreshToken);
             console.log('Login successful via Bearer token.');
+            responcetxtlog.innerHTML = 'Login successful!'
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
             return data;
         }
 
@@ -422,3 +428,60 @@ function LogOut(){
         alert("You have been logged out.")
     }
 }
+
+async function GetUserPosts(){
+    let postsHTML = ``;
+    let responce = await fetch(`${BASE_URL}/api/DogShare/GetPostsOfUser`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    let posts = await responce.json()
+    posts.forEach(post => {
+        postsHTML += `
+            <div class="user-post">
+                <p style="font-weight: bold;" class="title">${post.title}</p>
+                <p class="description">${post.description}</p>
+                <p class="dateposted">${new Date(post.datePosted).toLocaleString()}</p>
+                <p class="likes">Likes: <span class="like-count-num">${post.likes}</span></p>
+                <button class="likebtn" data-post-id="${post.id}">like</button>
+                <button class="dislikebtn" data-post-id="${post.id}">dislike</button>
+            </div>
+        `
+    });
+    return postsHTML;
+}
+
+
+
+async function GetUser(){
+    let userHTML = ``;
+    let responce = await fetch(`${BASE_URL}/api/DogShare/UserInfo`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    let user = await responce.json()
+
+    userHTML += `
+        <div class="user-info">
+            <h2>User Information</h2>
+            <p><strong>Email:</strong> ${user.email}</p>
+            <p class="postsform"><strong>Posts</strong> ${await GetUserPosts()}</p>
+        </div>
+    `
+    userpageHTML.innerHTML = userHTML;
+    return user;
+}
+
+
+userpage.addEventListener("click", async function(event) {
+    event.preventDefault();
+    let user = await GetUser();
+    let userposts = await GetUserPosts();
+    console.log(userposts);
+});

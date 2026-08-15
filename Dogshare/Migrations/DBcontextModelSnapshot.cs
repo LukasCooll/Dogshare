@@ -53,7 +53,7 @@ namespace Dogshare.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("DogShare.Thing.Dog", b =>
@@ -96,7 +96,7 @@ namespace Dogshare.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Dogs");
+                    b.ToTable("Dogs", (string)null);
                 });
 
             modelBuilder.Entity("DogShare.Thing.Post", b =>
@@ -132,7 +132,7 @@ namespace Dogshare.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("DogShare.Thing.PostLike", b =>
@@ -147,7 +147,7 @@ namespace Dogshare.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostLikes");
+                    b.ToTable("PostLikes", (string)null);
                 });
 
             modelBuilder.Entity("DogShare.Thing.User", b =>

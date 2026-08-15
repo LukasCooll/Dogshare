@@ -281,5 +281,40 @@ namespace Dogshare.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
+        [Authorize]
+        [HttpGet("GetPostsOfUser")]
+        public async Task<ActionResult<IEnumerable<Post>>> GetPostsOfUser()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("You must be logged in to view user information.");
+            }
+            var Post = await _context.Posts
+                .Where(p => p.AuthorId == userId)
+                .Select(p => new
+                {
+                    p.id,
+                    p.Title,
+                    p.Description,
+                    p.Image,
+                    p.Likes,
+                    p.DatePosted,
+                    p.AuthorId,
+                    Comments = p.Comments.Select(c => new
+                    {
+                        c.id,
+                        c.CommentText,
+                        c.DateCommented,
+                        c.AuthorId,
+                        c.PostId
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(Post);
+
+        }
     }
 }
