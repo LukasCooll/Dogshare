@@ -33,6 +33,21 @@ namespace Dogshare
                 .HasForeignKey(pl => pl.PostId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Entity<CommentLike>()
+                .HasKey(cl => new { cl.UserId, cl.CommentId });
+
+            builder.Entity<CommentLike>()
+                .HasOne(cl => cl.User)
+                .WithMany()
+                .HasForeignKey(cl => cl.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<CommentLike>()
+                .HasOne(cl => cl.Comment)
+                .WithMany()
+                .HasForeignKey(cl => cl.CommentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             builder.Entity<Post>()
                 .HasOne(p => p.Author)
@@ -59,5 +74,6 @@ namespace Dogshare
         public DbSet<DogShare.Thing.Post> Posts { get; set; }
 
         public DbSet<DogShare.Thing.PostLike> PostLikes { get; set; }
+        public DbSet<DogShare.Thing.CommentLike> CommentLikes { get; set; }
     }
 }

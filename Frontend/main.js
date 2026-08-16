@@ -15,7 +15,8 @@
     navlogout.hidden = true;
     let alluserposts;
     let postid;
-        
+    let userid;
+    let commentsHTMLArray;
 
 
 
@@ -33,7 +34,7 @@
             
 
             for (const element of posts) {
-                let commentsHTMLArray = await Promise.all(
+                commentsHTMLArray = await Promise.all(
                     element.comments.map(async (c) => {
                         let user = await GetUserByID(c.authorId);
                         return `
@@ -73,12 +74,12 @@
                             <input class="commentinput" placeholder="Write comment here" type="text">
                             <button class="submitcomt" data-post-id="${element.id}">submit</button>
                             <h4>Comments:</h4>
-                            ${commentsHTMLArray}
+                            ${commentsHTMLArray.join('')}
                         </div>
                     </div>
                     <hr>`;
                 
-                console.log(element);
+                // console.log(element);
             }
 
             document.querySelector(".posts").innerHTML = HTML;
@@ -187,7 +188,9 @@ async function fetchProtectedData() {
         navreg.hidden = true;
         navlogin.hidden = true;
         navlogout.hidden = false;
+        userid = user.id;
         userpage.innerHTML = 'welcome: ' + user.email;
+        document.querySelector(".emailview").innerHTML = user.email;
         console.log('User Info:', user);
         return user;
     } catch (err) {
@@ -428,3 +431,77 @@ function LogOut(){
         alert("You have been logged out.")
     }
 }
+
+
+async function UserPosts() {
+    let userpostsHTML = ``;
+    
+    try {
+        let response = await fetch(`${BASE_URL}/api/DogShare/GetPostsOfUser`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) return;
+        let posts = await response.json();
+
+        for (const post of posts) {
+            let commentsHTML = '';
+            if (post.comments && post.comments.length > 0) {
+                const commentsArray = await Promise.all(
+                    post.comments.map(async (c) => {
+                        let user = await GetUserByID(c.authorId);
+                        return `
+                            <div class="comment">
+                                <span class="comment-author"><strong>${user.userName || user.username || 'User'}</strong>: </span>
+                                <span class="comment-text">${c.commentText}</span>
+                                <div><small class="comment-date">${new Date(c.dateCommented).toLocaleString()}</small></div>
+                            </div>
+                        `;
+                    })
+                );
+                commentsHTML = commentsArray.join('');
+            }
+
+            userpostsHTML += `
+                <div class="userpost">
+                    <p class="title">${post.title}</p>
+                    <p class="description">${post.description}</p>
+                    <p class="dateposted">${new Date(post.datePosted).toLocaleString()}</p>
+                    <p class="likes">Likes: ${post.likes}</p>
+                    <button class="likebtn" data-post-id="${post.id}">like</button>
+                    <button class="dislikebtn" data-post-id="${post.id}">dislike</button>
+                    <div class="comments">
+                        <input class="commentinput" placeholder="Write comment here" type="text">
+                        <button class="submitcomt" data-post-id="${post.id}">submit</button>
+                        <h4>Comments:</h4>
+                        ${commentsHTML}
+                    </div>
+                </div>
+                <hr>`;
+        }
+
+        document.querySelector('.userposts').innerHTML = userpostsHTML;
+    } catch (error) {
+        console.error("Error fetching user posts:", error);
+    }
+}
+
+UserPosts()
+
+
+
+document.querySelector(".usernameuser").addEventListener("click", function(event){
+    event.preventDefault();
+    const element = document.querySelector(".userpopup");
+    element.style.display = "flex"; 
+})
+
+document.querySelector(".closeuserpopup").addEventListener("click", function(event){
+    event.preventDefault();
+    const element = document.querySelector(".userpopup")
+    element.style.display = "none";
+})

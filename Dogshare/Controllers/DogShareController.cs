@@ -163,11 +163,11 @@ namespace Dogshare.Controllers
                 CommentText = commentDto.Content,
                 DateCommented = DateTime.UtcNow,
                 AuthorId = userId,
-                PostId = postId
+                PostId = postId,
+                Likes = 0
             };
 
-
-            _context.Comments.AddAsync(comment);
+            _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
             return Ok(new
             {
@@ -175,12 +175,76 @@ namespace Dogshare.Controllers
                 comment.CommentText,
                 comment.DateCommented,
                 comment.AuthorId,
-                comment.PostId
+                comment.PostId,
+                comment.Likes
+            });
+        }
+
+        [Authorize]
+        [HttpPost("commentlike/{commentId}")]
+        public async Task<ActionResult<Comment>> LikeComment(int commentId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("You must be logged in to like a comment.");
+            }
+
+            var comment = await _context.Comments.FindAsync(commentId);
+            if (comment == null)
+            {
+                return NotFound("Comment not found.");
+            }
+
+            var hasLiked = await _context.CommentLikes
+                .AnyAsync(cl => cl.UserId == userId && cl.CommentId == commentId);
+
+            if (hasLiked)
+            {
+                return BadRequest("You have already liked this comment.");
+            }
+
+            _context.CommentLikes.Add(new CommentLike
+            {
+                UserId = userId,
+                CommentId = commentId
             });
 
+            comment.Likes += 1;
+            await _context.SaveChangesAsync();
 
+            return Ok(comment);
+        }
 
-            //TODO: fix Comments, configure everything and do frontend
+        [Authorize]
+        [HttpDelete("commentunlike/{commentId}")]
+        public async Task<ActionResult<Comment>> UnlikeComment(int commentId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("You must be logged in to unlike a comment.");
+            }
+
+            var comment = await _context.Comments.FindAsync(commentId);
+            if (comment == null)
+            {
+                return NotFound("Comment not found.");
+            }
+
+            var commentLike = await _context.CommentLikes
+                .FirstOrDefaultAsync(cl => cl.UserId == userId && cl.CommentId == commentId);
+
+            if (commentLike == null)
+            {
+                return BadRequest("You have not liked this comment yet.");
+            }
+
+            _context.CommentLikes.Remove(commentLike);
+            comment.Likes -= 1;
+            await _context.SaveChangesAsync();
+
+            return Ok(comment);
         }
 
 
@@ -199,11 +263,12 @@ namespace Dogshare.Controllers
             p.AuthorId,
             Comments = p.Comments.Select(c => new
             {
-                c.id, 
+                c.id,
                 c.CommentText,
                 c.DateCommented,
                 c.AuthorId,
-                c.PostId
+                c.PostId,
+                c.Likes
             }).ToList()
         })
         .ToListAsync();
@@ -308,7 +373,8 @@ namespace Dogshare.Controllers
                         c.CommentText,
                         c.DateCommented,
                         c.AuthorId,
-                        c.PostId
+                        c.PostId,
+                        c.Likes
                     }).ToList()
                 })
                 .ToListAsync();
