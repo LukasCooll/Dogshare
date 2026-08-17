@@ -5,17 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <title>DogShare</title>
 </head>
 <body>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">DogShare</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+    <nav>
+        <div class="navbarcollapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
                 <a class="nav-link" href="#">Feed</a>
@@ -28,7 +22,7 @@
                 </li>
                 <li><a class="nav-link" href=""><p class="usernameuser"></p></a></li>
                 <li>
-                <a class="nav-link" href="">Post</a>
+                <a class="nav-link" id="postbtn" href="">Post</a>
                 </li>
                 <li>
                 <a class="nav-link" href=""></a>
@@ -38,10 +32,9 @@
                 </li>
             </ul>
             </div>
-        </div>
-        </nav>
+    </nav>
 
-
+    <div><blockquote class="imgur-embed-pub" lang="en" data-id="a/pTZvKKa" data-context="false" ><a href="https://imgur.com/a/pTZvKKa"></a></blockquote></div>
 
 
         
@@ -69,7 +62,7 @@
 
     <div class="userpopup">
         <div class="userbox">
-        <button class="closeuserpopup">X</button>
+        <button class="closeuserpopup"><i class="fa-solid fa-xmark"></i></button>
         <h1>Email:</h1>
         <h3 class="emailview"></h3>
         <h3>Posts:</h3>
@@ -77,12 +70,17 @@
         </div>
     </div>
 
-    <h1>feed</h1>
+    <h1 style="text-align: center;">feed</h1>
     <div class="posts"></div>
 
 
     <div class="userpage"></div>
 
     <script src="main.js"></script>
+
+    <div class="create post">
+
+    </div>
+    <script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 </body>
 </html>

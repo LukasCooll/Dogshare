@@ -13,10 +13,18 @@
     let userpageHTML = document.querySelector(".userpage")
     navlogout = document.querySelector("#navlogout")
     navlogout.hidden = true;
+    let postbtn = document.querySelector("#postbtn")
+    postbtn.hidden = true;
     let alluserposts;
     let postid;
     let userid;
     let commentsHTMLArray;
+
+
+        function extractDirectUrl(bbcode) {
+            const match = bbcode.match(/\[img\](.*?)\[\/img\]/);
+            return match ? match[1] : bbcode; // falls back to original if it's already a plain URL
+        }
 
 
 
@@ -60,16 +68,17 @@
                 }
 
                 postid = element.id;
-
                 HTML += `
                     <div class="post">
                         <p class="username">${userHTML}</p>
                         <p style="font-weight: bold;" class="title">${element.title}</p>
+                        <img class="postimg" style="width: 80%" src="${extractDirectUrl("[url=https://ibb.co/0pwnCRzv][img]https://i.ibb.co/Q75JP3xt/Brooks-Chase-Ranger-of-Jolly-Dogs-Jack-Russell.jpg[/img][/url]")}" alt="">
+                        <div><blockquote class="imgur-embed-pub" lang="en" data-id="a/pTZvKKa" data-context="false" ><a href="https://imgur.com/a/pTZvKKa"></a></blockquote></div>
                         <p class="description">${element.description}</p>
                         <p class="dateposted">${new Date(element.datePosted).toLocaleString()}</p>
                         <p class="likes">Likes: <span class="like-count-num">${element.likes}</span></p>
-                        <button class="likebtn" data-post-id="${element.id}">like</button>
-                        <button class="dislikebtn" data-post-id="${element.id}">dislike</button>
+                        <button class="likebtn" data-post-id="${element.id}"><i class="fa-solid fa-up-long"></i></button>
+                        <button class="dislikebtn" data-post-id="${element.id}"><i class="fa-solid fa-down-long"></i></button>
                         <div class="comments">
                             <input class="commentinput" placeholder="Write comment here" type="text">
                             <button class="submitcomt" data-post-id="${element.id}">submit</button>
@@ -188,6 +197,7 @@ async function fetchProtectedData() {
         navreg.hidden = true;
         navlogin.hidden = true;
         navlogout.hidden = false;
+        postbtn.hidden = false;
         userid = user.id;
         userpage.innerHTML = 'welcome: ' + user.email;
         document.querySelector(".emailview").innerHTML = user.email;
@@ -472,8 +482,8 @@ async function UserPosts() {
                     <p class="description">${post.description}</p>
                     <p class="dateposted">${new Date(post.datePosted).toLocaleString()}</p>
                     <p class="likes">Likes: ${post.likes}</p>
-                    <button class="likebtn" data-post-id="${post.id}">like</button>
-                    <button class="dislikebtn" data-post-id="${post.id}">dislike</button>
+                    <button class="likebtn" data-post-id="${post.id}"><i class="fa-solid fa-up-long"></i></button>
+                    <button class="dislikebtn" data-post-id="${post.id}"><i class="fa-solid fa-down-long"></i></button>
                     <div class="comments">
                         <input class="commentinput" placeholder="Write comment here" type="text">
                         <button class="submitcomt" data-post-id="${post.id}">submit</button>
@@ -505,3 +515,4 @@ document.querySelector(".closeuserpopup").addEventListener("click", function(eve
     const element = document.querySelector(".userpopup")
     element.style.display = "none";
 })
+
