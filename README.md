@@ -3,7 +3,7 @@
 DogShare is a social network designed for dog owners to showcase their pets, share posts, and connect with other dog lovers.
 
 > **Project Status:** Backend architecture is ~90% complete. Frontend development is currently in progress to deliver a clean, polished UI.
-> **Updates: 30% of frontend complete. added post view, user check, log in/register, likes and dislikes
+> **Updates: 30% of frontend complete. added post view, user check, log in/register, likes and dislikes.
 
 ---
 
