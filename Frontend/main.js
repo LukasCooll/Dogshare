@@ -23,7 +23,7 @@
 
         function extractDirectUrl(bbcode) {
             const match = bbcode.match(/\[img\](.*?)\[\/img\]/);
-            return match ? match[1] : bbcode; // falls back to original if it's already a plain URL
+            return match ? match[1] : bbcode;
         }
 
 
@@ -72,8 +72,8 @@
                     <div class="post">
                         <p class="username">${userHTML}</p>
                         <p style="font-weight: bold;" class="title">${element.title}</p>
-                        <img class="postimg" style="width: 80%" src="${extractDirectUrl("[url=https://ibb.co/0pwnCRzv][img]https://i.ibb.co/Q75JP3xt/Brooks-Chase-Ranger-of-Jolly-Dogs-Jack-Russell.jpg[/img][/url]")}" alt="">
-                        <div><blockquote class="imgur-embed-pub" lang="en" data-id="a/pTZvKKa" data-context="false" ><a href="https://imgur.com/a/pTZvKKa"></a></blockquote></div>
+                        <img class="postimg" style="width: 80%" src="${element.image}" alt="">
+                        <h5>Description:</h5>
                         <p class="description">${element.description}</p>
                         <p class="dateposted">${new Date(element.datePosted).toLocaleString()}</p>
                         <p class="likes">Likes: <span class="like-count-num">${element.likes}</span></p>
@@ -88,7 +88,6 @@
                     </div>
                     <hr>`;
                 
-                // console.log(element);
             }
 
             document.querySelector(".posts").innerHTML = HTML;
@@ -479,6 +478,7 @@ async function UserPosts() {
             userpostsHTML += `
                 <div class="userpost">
                     <p class="title">${post.title}</p>
+                    <img class="postimg" style="width: 80%" src="${post.image}" alt="">
                     <p class="description">${post.description}</p>
                     <p class="dateposted">${new Date(post.datePosted).toLocaleString()}</p>
                     <p class="likes">Likes: ${post.likes}</p>
@@ -532,11 +532,33 @@ async function Post(title,description,image){
             datePosted: new Date().toISOString() })
     })
     var data = await response.json();
+    if(title == "" || description == ""){
+        alert("NO!")
+        return
+    }
+    alert("Posted Sucssessfully!")
+    window.location.reload();
     return data;
 }
 
 
 document.querySelector("#postbtn").addEventListener("click", function(event) {
     event.preventDefault();
-    Post("DOGS ARE COOL","WOW!!!","DFGD")
+    document.querySelector(".postpopup").style.display = "flex"; 
+})
+
+
+document.querySelector(".closepostpopup").addEventListener("click", function(event){
+    event.preventDefault();
+    const element = document.querySelector(".postpopup")
+    element.style.display = "none";
+})
+
+document.querySelector(".PostSubmit").addEventListener("click", function(event){
+    event.preventDefault()
+    const Title = document.querySelector(".inpTitle").value
+    const Description = document.querySelector(".inpDescription").value
+    const Image = document.querySelector(".inpImage").value
+
+    Post(Title, Description, extractDirectUrl(Image))
 })
