@@ -516,3 +516,27 @@ document.querySelector(".closeuserpopup").addEventListener("click", function(eve
     element.style.display = "none";
 })
 
+async function Post(title,description,image){
+
+    var response = await fetch(`${BASE_URL}/api/DogShare/AddPost`,{
+        method: "POST",
+        headers:{
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({             
+            title: title,
+            description: description,
+            image: image,       
+            likes: 0,          
+            datePosted: new Date().toISOString() })
+    })
+    var data = await response.json();
+    return data;
+}
+
+
+document.querySelector("#postbtn").addEventListener("click", function(event) {
+    event.preventDefault();
+    Post("DOGS ARE COOL","WOW!!!","DFGD")
+})
